@@ -7,7 +7,7 @@ using System;
 public class GameStatusDTO
 {
     public List<int> blocks;
-    public List<G_Object> objects;
+    public List<G_Object> obstacles;
     public List<G_Unit> units;
 }
 
@@ -22,10 +22,37 @@ public class G_Object
 [Serializable]
 public class G_Unit
 {
-    public int unitId;
+    /// <summary>
+    /// Unit ID | {ABC}{123} | ABC means type, 123 means player
+    /// </summary>
+    public string id;
     public int x;
     public int y;
+    public int angle;
     public int hp;
     public int fp;
-    public int player;
+    public string playerId;
+}
+
+[Serializable]
+public class ActionsDTO
+{
+    /// <summary>
+    /// actions of units
+    /// </summary>
+    public List<ActionDTO> actions;
+}
+
+[Serializable]
+public class ActionDTO
+{
+    /// <summary>
+    /// unit to move
+    /// </summary>
+    public string unit;
+
+    /// <summary>
+    /// serialized blocks
+    /// </summary>
+    public string blocks;
 }

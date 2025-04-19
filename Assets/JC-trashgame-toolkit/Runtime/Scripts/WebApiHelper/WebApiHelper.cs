@@ -22,7 +22,7 @@ public class WebApiHelper : MonoSingleton<WebApiHelper>
     /// 有沒有使用 ApiResponseModel (見最底下) 包裝資料
     /// 如果是 false，那 CallApi 回傳的 msg 就是空的
     /// </summary>
-    private static bool USE_API_RESPONSE_MODEL = false;
+    public static bool USE_API_RESPONSE_MODEL = true;
 
     
     /// <summary>
