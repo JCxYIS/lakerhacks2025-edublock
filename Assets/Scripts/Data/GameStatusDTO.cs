@@ -41,6 +41,7 @@ public class ActionsDTO
     /// actions of units
     /// </summary>
     public List<ActionDTO> actions;
+    public string playerId;
 }
 
 [Serializable]

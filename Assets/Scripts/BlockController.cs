@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MG_BlocksEngine2.Serializer;
 using MG_BlocksEngine2.Environment;
+using MG_BlocksEngine2.Core;
 
 /// <summary>
 /// Coding blocks
@@ -11,6 +12,7 @@ public class BlockController : MonoBehaviour
 {
     // public CanvasGroup _progEnvCanvasGroup;
     I_BE2_ProgrammingEnv _be2ProgrammingEnv;
+    BE2_ExecutionManager _be2ExecutionManager;
     public bool IsPlayerControlledBlocks = false;
 
     /* -------------------------------------------------------------------------- */
@@ -18,12 +20,9 @@ public class BlockController : MonoBehaviour
     void Awake()
     {
         _be2ProgrammingEnv = GetComponentInChildren<I_BE2_ProgrammingEnv>();
+        _be2ExecutionManager = FindAnyObjectByType<BE2_ExecutionManager>();
     }
 
-    void Update()
-    {
-        // SetEnable(BlocksManager.Instance.IsEnabled && IsPlayerControlledBlocks);
-    }
 
     /* -------------------------------------------------------------------------- */
 
@@ -52,5 +51,6 @@ public class BlockController : MonoBehaviour
     public void PlayBlocks()
     {
         // TODO
+        _be2ExecutionManager.Play();
     }
 }

@@ -115,7 +115,9 @@ public class GameController : MonoBehaviour
         _phase = GamePhase.WaitForOthers;
         
         // call api
-        WebApiHelper.CallApi<string>("POST", "gameStatus", BlocksManager.Instance.SerializeMyBlocks(), (succ,_) => {
+        var turnForm = BlocksManager.Instance.SerializeMyBlocks();
+        turnForm.playerId = playerId;
+        WebApiHelper.CallApi<string>("POST", $"submit-turn", turnForm, (succ,_) => {
             if(!succ)
             {
                 Debug.LogError("Failed to post game status");
@@ -134,16 +136,16 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(1f);
             
             // retrieve everyone's blocks
-            WebApiHelper.CallApi<List<string>>("GET", $"allPlayersActions?playerId={playerId}", 
+            WebApiHelper.CallApi<ActionsDTO>("GET", $"all-player-actions?playerId={playerId}", 
             (succ, data) => {
                 if(!succ || data == null)
                 {
-                    Debug.LogWarning("Failed to get game status");
+                    Debug.Log("Waiting for others... or error..?");
                     return;
                 }
                 print("Everyone's blocks retrieved successfully.");
                 _phase = GamePhase.Animation;
-                Animation(data);
+                Animation(data.actions);
                 isOk = true;
             });
         }
@@ -155,16 +157,9 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="actionsOfAllPlayers">Actions of each players</param>
-    void Animation(List<string> actionsOfAllPlayers)
+    /// <param name="actions">Actions of each players</param>
+    void Animation(List<ActionDTO> actions)
     {
-        // to dtos
-        List<ActionDTO> actions = new List<ActionDTO>();
-        foreach(var actionsOfEachPlayers in actionsOfAllPlayers)
-        {
-            ActionsDTO actionsOfUnits = JsonUtility.FromJson<ActionsDTO>(actionsOfEachPlayers);
-            actions.AddRange(actionsOfUnits.actions);
-        }
 
         // assign actions to each unit
         foreach(var unit in _units)

@@ -186,15 +186,16 @@ public class WebApiHelper : MonoSingleton<WebApiHelper>
             }
         }        
 
+#if UNITY_EDITOR
         Debug.Log(
             $"[WebAPI] <color=teal>({requestId.ToString("000")}) {www.method} {www.url}</color> > " +
             (isSuccess ? "<color=green>Success</color>" : "<color=red>Failed</color>") + 
             $"({www.responseCode}) " +
             $"{msg}"
-            // + $"\n{www.downloadHandler.text}"
+            + $"\n{www.downloadHandler.text}"
             // + $"\n{returnData}"
         );
-
+#endif
         callback?.Invoke(isSuccess, msg, returnData);        
     }
     

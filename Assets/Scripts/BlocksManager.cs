@@ -64,9 +64,10 @@ public class BlocksManager : MonoBehaviour
         b.interactable = true;
     }
 
-    public string SerializeMyBlocks()
+    public ActionsDTO SerializeMyBlocks()
     {
         ActionsDTO actions = new ActionsDTO();
+        actions.actions = new List<ActionDTO>();
         var units = FindObjectsByType<Unit>(FindObjectsSortMode.None);
         foreach (var unit in units)
         {
@@ -80,6 +81,6 @@ public class BlocksManager : MonoBehaviour
                 break;
             }
         }
-        return JsonUtility.ToJson(actions);
+        return actions;
     }
 }
