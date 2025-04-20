@@ -14,8 +14,11 @@ public class Unit : MonoBehaviour
     public int fp = 0;
     public string playerId;
     public bool isPlayerControlled => BlockController.IsPlayerControlledBlocks;
+    public bool isDead = false;
     UnitLabel _unitLabel;
 
+    Vector2 GridPosition => XZ(transform.position-GameController.Instance._worldContainer.transform.position);
+    Vector2 XZ(Vector3 v) => new Vector2(v.x, v.z);
 
     void Awake()
     {
@@ -36,6 +39,32 @@ public class Unit : MonoBehaviour
     {
         _unitLabel.hpLabel.text = $"{hp}";
         // _unitLabel.transform.position = transform.position + new Vector3(0, 1.5f, 0);
+
+        if(isDead)
+        {
+            transform.position = new Vector3(0, -10, 0);
+            return;
+        }
+        
+        var pos = GridPosition;
+        if(pos.x < 0 || pos.y < 0 || pos.x >= 5 || pos.y >= 5)
+        {
+            Dead();
+            // enabled = false;
+        }
+    }
+
+    void Dead()
+    {
+        if(isDead) return;
+        isDead = true;
+
+        // play explosion fx at position
+        // TODO
+
+        print($"Unit {name} is Dead");
+        hp = 0;
+        transform.position = new Vector3(0, -10, 0);
     }
 
     void OnTriggerEnter(Collider other)
@@ -52,8 +81,7 @@ public class Unit : MonoBehaviour
 
         if(hp <= 0)
         {
-            print($"Unit {name} is Dead");
-            transform.position = new Vector3(0, -10, 0);
+            Dead();
         }
     }
 }

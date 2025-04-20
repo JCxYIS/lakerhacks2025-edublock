@@ -38,6 +38,19 @@ public class BlocksManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        foreach(var unit in _unitButtons.Keys)
+        {
+            if(unit.isDead)
+            {
+                _unitButtons[unit].interactable = false;
+                // _unitButtons.Remove(unit);
+                break;
+            }
+        }
+    }
+
     /* -------------------------------------------------------------------------- */
 
     public void SetEnable(bool enable)

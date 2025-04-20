@@ -18,5 +18,7 @@ public class MenuController : MonoBehaviour
         btn2.transform.DOScale(1.1f, .4f)
             .SetEase(Ease.Linear)
             .SetLoops(-1, LoopType.Yoyo);
+
+        Application.targetFrameRate = 120;
     }
 }
