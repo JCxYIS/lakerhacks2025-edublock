@@ -43,7 +43,17 @@ public class Unit : MonoBehaviour
         if(other.CompareTag("GameController"))
         {
             var otherUnit = other.GetComponent<Unit>();
-            hp -= otherUnit.fp;
+            hp -= otherUnit.hp;
+        }
+        else if(other.CompareTag("Finish") && other.transform.parent != transform)
+        {
+            hp -= 1;
+        }
+
+        if(hp <= 0)
+        {
+            print($"Unit {name} is Dead");
+            transform.position = new Vector3(0, -10, 0);
         }
     }
 }
