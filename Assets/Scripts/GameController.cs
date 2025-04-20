@@ -92,12 +92,15 @@ public class GameController : MonoBehaviour
         // TODO Initialize objects
         foreach (var obj in gameStatus.obstacles)
         {
-            // GameObject objPrefab = Resources.Load<GameObject>("Obstacles/"+obj.name);
-            // if (objPrefab != null)
-            // {
-            //     var u = Instantiate(objPrefab, new Vector3(obj.x, 0, obj.y), Quaternion.identity);
-                
-            // }
+            GameObject objPrefab = Resources.Load<GameObject>("Obstacles/"+obj.type);
+            if (objPrefab != null)
+            {
+                Instantiate(objPrefab, new Vector3(obj.x, 0, obj.y)+_worldContainer.position, Quaternion.identity);
+            }
+            else
+            {
+                Debug.LogError($"Prefab not found for {obj.type}");
+            }
         }
 
         // init 

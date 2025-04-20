@@ -59,14 +59,12 @@ public class Unit : MonoBehaviour
         if(isDead) return;
         isDead = true;
 
+        hp = 0;
+
         // play explosion fx at position
-        // TODO
+        PlayFX("Explosion", .5f);
 
         print($"Unit {name} is Dead");
-        hp = 0;
-        var exp = Instantiate(Resources.Load<GameObject>("FX/Explosion"), transform.position, Quaternion.identity);
-        exp.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        Destroy(exp, 2);
         transform.position = new Vector3(0, -10, 0);
     }
 
@@ -74,18 +72,47 @@ public class Unit : MonoBehaviour
     {
         if(other.CompareTag("GameController"))
         {
+            // other unit
             var otherUnit = other.GetComponent<Unit>();
             hp -= otherUnit.hp;
+            PlayFX("Explosion", .25f);
         }
-        else if(other.CompareTag("Finish") && other.transform.parent != transform)
+        else if(other.CompareTag("Finish"))
         {
+            // bullet
             hp -= 1;
+            PlayFX("Explosion", 0.15f);
+        }
+        else if(other.CompareTag("Heal"))
+        {
+            // heal
+            hp += 3;
+            // PlayFX("Heal", .15f);
+        }
+        else if(other.CompareTag("Wall"))
+        {
+            // obstacle
+            hp -= 2;
+            PlayFX("Explosion", 0.15f);
         }
 
         if(hp <= 0)
         {
             Dead();
         }
+    }
+
+    void Heal()
+    {
+
+    }
+
+
+    void PlayFX(string fxName, float scale = .3f)
+    {
+        var fx = Instantiate(Resources.Load<GameObject>($"FX/{fxName}"), transform.position, Quaternion.identity);
+        fx.transform.localScale = new Vector3(scale, scale, scale);
+        Destroy(fx, 5);
     }
 }
 

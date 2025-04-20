@@ -106,6 +106,7 @@ public class WebApiHelper : MonoSingleton<WebApiHelper>
                 www.SetRequestHeader(pair.Key, pair.Value);
             }
         }
+        www.SetRequestHeader("ngrok-skip-browser-warning", "true");
 
         // payload
         int payloadSize = 0;

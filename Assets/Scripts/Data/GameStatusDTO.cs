@@ -14,7 +14,7 @@ public class GameStatusDTO
 [Serializable]
 public class G_Object
 {
-    public string name;
+    public string type;
     public int x;
     public int y;
 }
