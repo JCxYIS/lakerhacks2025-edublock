@@ -243,7 +243,7 @@ public class GameController : MonoBehaviour
         _playButtonDummy.gameObject.SetActive(false);
 
         // TODO wait until animation done
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
         // TODO P1: post state 
         // if(playerId == "player1")

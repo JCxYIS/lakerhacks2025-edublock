@@ -5040,7 +5040,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BlockController: {fileID: 4400467808229762490}
-  unitNameText: {fileID: 6939290722979933962}
   unitId: 
   hp: 0
   fp: 0
@@ -5057,6 +5056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4818b3e0fe0de4d9380c11023314ff70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _be2ProgrammingEnv: {fileID: 0}
   IsPlayerControlledBlocks: 0
 --- !u!1 &5451076112112558553
 GameObject:
@@ -10318,7 +10318,7 @@ PrefabInstance:
         type: 3}
       propertyPath: targetObject
       value: 
-      objectReference: {fileID: 7705464136180424748}
+      objectReference: {fileID: 0}
     - target: {fileID: 5922984445393343417, guid: aacfe4e5fded04418b70a2cb38413f4d,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -10661,18 +10661,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aacfe4e5fded04418b70a2cb38413f4d, type: 3}
---- !u!114 &6939290722979933962 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5922984446040350620, guid: aacfe4e5fded04418b70a2cb38413f4d,
-    type: 3}
-  m_PrefabInstance: {fileID: 3638902852711608470}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &6939290723533313996 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5922984445519472474, guid: aacfe4e5fded04418b70a2cb38413f4d,

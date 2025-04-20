@@ -35,11 +35,14 @@ namespace MG_BlocksEngine2.Environment
         {
             GameObject newBullet = Instantiate(_bullet, _bullet.transform.position, Quaternion.identity);
             newBullet.SetActive(true);
+            newBullet.tag = "Untagged";
             newBullet.GetComponent<Rigidbody>().AddForce(transform.forward * 1000);
             StartCoroutine(C_DestroyTime(newBullet));
         }
         IEnumerator C_DestroyTime(GameObject go)
         {
+            yield return new WaitForSeconds(0.1f);
+            go.tag = "Finish";
             yield return new WaitForSeconds(1f);
             Destroy(go);
         }
