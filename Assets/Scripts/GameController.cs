@@ -1,12 +1,19 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using MG_BlocksEngine2.Environment;
+using MG_BlocksEngine2.Core;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public static GameController Instance;
+
     public string playerId = "player1";
-    public List<UnitObj> unitPrefabs;
+    public List<GameObject> _unitObjs;
+    public List<BE2_ProgrammingEnv> _unitEnvs;
     public Transform _worldContainer;
+    public PlayAnimationButton _playButtonDummy;
 
     /* -------------------------------------------------------------------------- */
     [Header("Runtime")]
@@ -15,8 +22,6 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     public List<GameObject> _objects = new List<GameObject>();
-    [SerializeField]
-    public List<Unit> _units = new List<Unit>();
 
 
     /* -------------------------------------------------------------------------- */
@@ -29,7 +34,14 @@ public class GameController : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        Instance = this;   
+        _playButtonDummy.gameObject.SetActive(false);
         
+        var menuData = FindAnyObjectByType<MenuDataPasser>();
+        if(menuData)
+        {
+            playerId = menuData.playerName;
+        }
     }
 
     void Start()
@@ -75,7 +87,7 @@ public class GameController : MonoBehaviour
             
         }
 
-        // Initialize objects
+        // TODO Initialize objects
         foreach (var obj in gameStatus.obstacles)
         {
             // GameObject objPrefab = Resources.Load<GameObject>("Obstacles/"+obj.name);
@@ -87,21 +99,21 @@ public class GameController : MonoBehaviour
         }
 
         // init 
-        foreach (var unit in gameStatus.units)
+        for(int i = 0; i < 4; i++)  // FIXME max 2 user x 2 units
         {
-            GameObject unitPrefab = Resources.Load<GameObject>("Units/BasicUnit");
-            var u = Instantiate(unitPrefab, _worldContainer).GetComponent<Unit>();
-            u.transform.localPosition = new Vector3(unit.x, 0, unit.y);
-            u.transform.localRotation = Quaternion.Euler(0, unit.angle, 0);
-            u.playerId = unit.playerId;
-            if(u.playerId == playerId)
-            {
-                BlocksManager.Instance.RegisterMyUnit(u);
-            }
-            u.hp = unit.hp;
-            u.fp = unit.fp;
-            u.unitId = unit.id.ToString();
-            _units.Add(u);
+            var u = _unitObjs[i].AddComponent<Unit>();
+            
+            var unitData = gameStatus.units[i];
+            u.transform.position = new Vector3( unitData.x, 0, unitData.y) + _worldContainer.position;
+            u.transform.localRotation = Quaternion.Euler(0, unitData.angle, 0);
+            u.playerId = unitData.playerId;
+            u.unitId = unitData.id;
+            u.hp = unitData.hp;
+            u.fp = unitData.fp;
+            
+            u.BlockController = _unitObjs[i].AddComponent<BlockController>();
+            u.BlockController._be2ProgrammingEnv = _unitEnvs[i];
+            BlocksManager.Instance.RegisterUnit(u, u.playerId == playerId);
         }
 
         _phase = GamePhase.ArrangeBlocks;
@@ -113,14 +125,20 @@ public class GameController : MonoBehaviour
     public void ConfirmBlock()
     {
         _phase = GamePhase.WaitForOthers;
+
+        // test 
+        // StartCoroutine(WaitForOthersAsync());
+        // return;
         
         // call api
         var turnForm = BlocksManager.Instance.SerializeMyBlocks();
         turnForm.playerId = playerId;
+        LoadingScreen.SetProgress(0, "Waiting for others...");
         WebApiHelper.CallApi<string>("POST", $"submit-turn", turnForm, (succ,_) => {
             if(!succ)
             {
                 Debug.LogError("Failed to post game status");
+                // ConfirmBlock();
                 return;
             }
             print("Player Blocks posted successfully.");
@@ -128,12 +146,19 @@ public class GameController : MonoBehaviour
         });
     }
 
+
     IEnumerator WaitForOthersAsync()
     {
         bool isOk = false;
+        float fakeProgress = 0;
         while(!isOk)
         {
             yield return new WaitForSeconds(1f);
+            if(fakeProgress <= 0.987)
+            {
+                fakeProgress += 0.033f;
+            }
+            LoadingScreen.SetProgress(fakeProgress);
             
             // retrieve everyone's blocks
             WebApiHelper.CallApi<ActionsDTO>("GET", $"all-player-actions?playerId={playerId}", 
@@ -143,12 +168,20 @@ public class GameController : MonoBehaviour
                     Debug.Log("Waiting for others... or error..?");
                     return;
                 }
+
+                if(_phase != GamePhase.WaitForOthers)
+                {
+                    // Debug.Log("Not in waiting phase, ignore this response");
+                    return;
+                }
+
                 print("Everyone's blocks retrieved successfully.");
                 _phase = GamePhase.Animation;
-                Animation(data.actions);
                 isOk = true;
+                Animation(data.actions);
             });
         }
+        LoadingScreen.SetProgress(1);
 
     }
 
@@ -162,26 +195,49 @@ public class GameController : MonoBehaviour
     {
 
         // assign actions to each unit
-        foreach(var unit in _units)
+        foreach(var unit in _unitObjs)
         {
-            var action = actions.Find(a => a.unit == unit.unitId);
-            if(action == null)
-            {
-                continue;
-            }
+            var u = unit.GetComponent<Unit>();
+            u.BlockController.ResetBlocks();
 
-            unit.BlockController.DeserializeBlocks(action.blocks);
-            unit.BlockController.PlayBlocks();
-            
-            // TODO wait until animation done
-            StartCoroutine(WaitForAnimationDone());
+            var action = actions.Find(a => a.unit == u.unitId);
+            if(action != null)
+            {
+                u.BlockController.DeserializeBlocks(action.blocks);
+            }
         }
+        StartCoroutine(WaitForAnimationDone());
     }
 
     IEnumerator WaitForAnimationDone()
     {
+        
+        // foreach(var unit in _unitObjs)
+        // {
+        //     unit.GetComponent<Unit>().BlockController.SetEnable(true);
+        //     unit.GetComponent<Unit>().BlockController.Reload();
+        // }
+        // yield return new WaitForSeconds(.5f);
+        // print("Do animation");
+        // _playButtonDummy.onClick?.in();
+        // yield return new WaitForSeconds(1f);
+        // foreach(var unit in _unitObjs)
+        // {
+        //     unit.GetComponent<Unit>().BlockController.SetEnable(false);
+        // }
+        _playButtonDummy.gameObject.SetActive(true);
+        _playButtonDummy.IsPlayed = false;
+        while(!_playButtonDummy.IsPlayed)
+        {
+            yield return null;
+        }
+        _playButtonDummy.gameObject.SetActive(false);
+
         // TODO wait until animation done
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
+
+        // TODO P1: post state 
+
         _phase = GamePhase.ArrangeBlocks;
     }
 

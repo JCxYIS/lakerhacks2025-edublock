@@ -18,6 +18,12 @@ EditorBuildSettings:
     path: Assets/BlocksEngine2_SciFi/Scenes/ScifiBE2SampleScene.unity
     guid: 28db5afba24f900ba844c731679c8717
   - enabled: 1
+    path: Assets/Scenes/Menu.unity
+    guid: caf8137f4cb084585908022b4825a548
+  - enabled: 0
     path: Assets/Scenes/MainGame.unity
     guid: 8063cc30558c74894bbf6bb96add959c
+  - enabled: 1
+    path: Assets/Scenes/MainGameA.unity
+    guid: 75744cd86cc154832b5998ce52516566
   m_configObjects: {}

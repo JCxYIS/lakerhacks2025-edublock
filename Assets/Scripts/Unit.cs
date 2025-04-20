@@ -2,16 +2,18 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using MG_BlocksEngine2.Environment;
+using TMPro;
 
-public class Unit : BE2_TargetObject
+public class Unit : MonoBehaviour
 {
     public BlockController BlockController;
+    public TMP_Text unitNameText;
 
     [Header("Runtime")]
     public string unitId;
     public int hp = 0;
     public int fp = 0;
-    public string playerId = "player1";
+    public string playerId;
     public bool isPlayerControlled => BlockController.IsPlayerControlledBlocks;
     
 
@@ -25,7 +27,7 @@ public class Unit : BE2_TargetObject
     void Start()
     {
         name = $"Unit {unitId} controlled by {playerId}";
-
+        // unitNameText.text = unitId;
     }
 }
 

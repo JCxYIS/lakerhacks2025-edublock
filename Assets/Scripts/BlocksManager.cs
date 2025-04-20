@@ -43,14 +43,22 @@ public class BlocksManager : MonoBehaviour
     public void SetEnable(bool enable)
     {
         IsEnabled = enable;
+        _unitButtonsParent.gameObject.SetActive(enable);
+
+        if(!enable)
+        {
+            _currentBlockController?.SetEnable(false);
+            _currentBlockController = null;
+        }
     }
 
     /* -------------------------------------------------------------------------- */
 
-    public void RegisterMyUnit(Unit unit)
+    public void RegisterUnit(Unit unit, bool myUnit)
     {
-        unit.BlockController.IsPlayerControlledBlocks = true;
+        unit.BlockController.IsPlayerControlledBlocks = myUnit;
         var b = Instantiate(_unitButtonPrefab, _unitButtonsParent).GetComponent<Button>();
+        b.interactable = myUnit;
         _unitButtons[unit] = b;
         b.GetComponentInChildren<TMP_Text>().text = unit.unitId;
         b.onClick.AddListener(() =>
@@ -58,10 +66,8 @@ public class BlocksManager : MonoBehaviour
             // onclick: enable that unit's blocks
             _currentBlockController?.SetEnable(false);
             unit.BlockController.SetEnable(true);
-            print($"Unit {unit.unitId} blocks enabled, {_currentBlockController?.name} disabled");
             _currentBlockController = unit.BlockController;
         });
-        b.interactable = true;
     }
 
     public ActionsDTO SerializeMyBlocks()

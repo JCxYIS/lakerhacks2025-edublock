@@ -55,7 +55,7 @@ namespace MG_BlocksEngine2.Serializer
         }
 
         // v2.12 - function to define the order of the serialized blocks
-        private static int OrderOnType(I_BE2_Block block)
+        public static int OrderOnType(I_BE2_Block block)
         {
             if (block.Type == BlockTypeEnum.define)
                 return 0;
