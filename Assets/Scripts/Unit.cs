@@ -64,6 +64,9 @@ public class Unit : MonoBehaviour
 
         print($"Unit {name} is Dead");
         hp = 0;
+        var exp = Instantiate(Resources.Load<GameObject>("FX/Explosion"), transform.position, Quaternion.identity);
+        exp.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        Destroy(exp, 2);
         transform.position = new Vector3(0, -10, 0);
     }
 
