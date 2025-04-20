@@ -74,7 +74,7 @@ public class BlockController : MonoBehaviour
 
         // _be2ExecutionManager.UpdateProgrammingEnvsList();
         // _be2ExecutionManager.UpdateBlocksStackList();
-        // _be2ExecutionManager.Play();
+        _be2ExecutionManager.Play();
 
     }
 

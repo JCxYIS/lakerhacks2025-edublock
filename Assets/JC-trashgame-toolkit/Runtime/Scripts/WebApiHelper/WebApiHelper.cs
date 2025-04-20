@@ -114,7 +114,7 @@ public class WebApiHelper : MonoSingleton<WebApiHelper>
             string payloadStr = JsonMapper.ToJson(payload);
             byte[] postBytes = System.Text.Encoding.UTF8.GetBytes(payloadStr);
             payloadSize = postBytes.Length;
-            // Debug.Log($"[WebAPI] Request Payload size={payloadSize}\nContent={payloadStr}");
+            Debug.Log($"[WebAPI] Request Payload size={payloadSize}\nContent={payloadStr}");
             www.SetRequestHeader("Content-Type", "application/json");
             www.uploadHandler = (UploadHandler)new UploadHandlerRaw(postBytes);
         }

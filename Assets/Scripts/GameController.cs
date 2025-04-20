@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MG_BlocksEngine2.Environment;
 using MG_BlocksEngine2.Core;
 using UnityEngine.UI;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class GameController : MonoBehaviour
         if(menuData)
         {
             playerId = menuData.playerName;
+            Destroy(menuData.gameObject);
         }
     }
 
@@ -124,6 +126,12 @@ public class GameController : MonoBehaviour
 
     public void ConfirmBlock()
     {
+        if(_phase == GamePhase.WaitForOthers)
+        {
+            // Debug.Log("Already in waiting phase");
+            return;
+        }
+
         _phase = GamePhase.WaitForOthers;
 
         // test 
@@ -138,7 +146,7 @@ public class GameController : MonoBehaviour
             if(!succ)
             {
                 Debug.LogError("Failed to post game status");
-                // ConfirmBlock();
+                ConfirmBlock();
                 return;
             }
             print("Player Blocks posted successfully.");
@@ -212,19 +220,20 @@ public class GameController : MonoBehaviour
     IEnumerator WaitForAnimationDone()
     {
         
-        // foreach(var unit in _unitObjs)
-        // {
-        //     unit.GetComponent<Unit>().BlockController.SetEnable(true);
-        //     unit.GetComponent<Unit>().BlockController.Reload();
-        // }
-        // yield return new WaitForSeconds(.5f);
+        foreach(var unit in _unitObjs)
+        {
+            unit.GetComponent<Unit>().BlockController.SetEnable(true);
+            unit.GetComponent<Unit>().BlockController.Reload();
+        }
+        yield return new WaitForSeconds(.5f);
         // print("Do animation");
         // _playButtonDummy.onClick?.in();
         // yield return new WaitForSeconds(1f);
-        // foreach(var unit in _unitObjs)
-        // {
-        //     unit.GetComponent<Unit>().BlockController.SetEnable(false);
-        // }
+        foreach(var unit in _unitObjs)
+        {
+            unit.GetComponent<Unit>().BlockController.SetEnable(false);
+        }
+
         _playButtonDummy.gameObject.SetActive(true);
         _playButtonDummy.IsPlayed = false;
         while(!_playButtonDummy.IsPlayed)
@@ -234,9 +243,16 @@ public class GameController : MonoBehaviour
         _playButtonDummy.gameObject.SetActive(false);
 
         // TODO wait until animation done
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
         // TODO P1: post state 
+        // if(playerId == "player1")
+        // {
+
+        // 
+        WebApiHelper.CallApi<string>("POST", $"turn-result", new GameStatusDTO(), (succ, data) => {
+            
+        });
 
         _phase = GamePhase.ArrangeBlocks;
     }

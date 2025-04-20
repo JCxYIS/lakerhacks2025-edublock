@@ -127,6 +127,7 @@ namespace MG_BlocksEngine2.Block.Instruction
         }
 
         int _overflowLimit = 100;
+        float jc_lastCommandTime = 0f;
 
         // v2.9 - ExecuteSection and ExecuteNextInstruction refactored to enable StepPlay and Pause
         public void ExecuteSection(int sectionIndex)
@@ -148,6 +149,7 @@ namespace MG_BlocksEngine2.Block.Instruction
                     {
                         BlocksStack.OverflowGuard++;
                         ExecuteInstruction(nextInstruction);
+                        // StartCoroutine(WaitForNextInstruction(nextInstruction));
                     }
                     else
                     {
@@ -161,6 +163,7 @@ namespace MG_BlocksEngine2.Block.Instruction
                     {
                         BlocksStack.OverflowGuard++;
                         ExecuteInstruction(nextInstruction);
+                        // StartCoroutine(WaitForNextInstruction(nextInstruction));
                     }
                     else
                     {

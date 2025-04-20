@@ -74,17 +74,18 @@ public class BlocksManager : MonoBehaviour
     {
         ActionsDTO actions = new ActionsDTO();
         actions.actions = new List<ActionDTO>();
-        var units = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+        var units = FindObjectsByType<Unit>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var unit in units)
         {
             if (unit.isPlayerControlled)
             {
+                // print($"Serialize {unit.unitId}");
+                unit.BlockController.Reload();
                 actions.actions.Add(new ActionDTO()
                 {
                     unit = unit.unitId,
                     blocks = unit.BlockController.SerializeBlocks()
                 });
-                break;
             }
         }
         return actions;
